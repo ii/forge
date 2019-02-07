@@ -51,11 +51,9 @@
 ;;; Utilities
 
 (cl-defmethod forge-get-url ((post forge-post))
-  (forge--format-url post (let ((topic (forge-get-parent post)))
-                            (cond ((forge--childp topic 'forge-issue)
-                                   'issue-post-url-format)
-                                  ((forge--childp topic 'forge-pullreq)
-                                   'pullreq-post-url-format)))))
+  (forge--format-url post (forge--echildcase (forge-get-parent post)
+                            (forge-issue 'issue-post-url-format)
+                            (forge-pullreq 'pullreq-post-url-format))))
 
 (cl-defmethod forge-browse :after ((post forge-post))
   (oset (forge-get-topic post) unread-p nil))
