@@ -1,16 +1,39 @@
 -include ../config.mk
 include ../default.mk
 
-lisp: $(ELCS) loaddefs
+EMAKE_SHA1 := 36c1603918c90327af6b97c3c621d555758d21d5
+
+EMAKE_ENV += PACKAGE_FILE="../$(PKG)-pkg.el"
+EMAKE_ENV += PACKAGE_LISP="$(ELS)"
+EMAKE_ENV += PACKAGE_ARCHIVES="gnu melpa"
+EMAKE_ENV += EMAKE_WORKDIR="$(EMAKE_WORKDIR)"
+EMAKE_ENV += EMAKE_LOGLEVEL="$(EMAKE_LOGLEVEL)"
+
+# Then, make it easy to invoke Emacs with EMake loaded.
+EMAKE = $(EMAKE_ENV) $(EMACS) --quick --batch --load '$(EMAKE_WORKDIR)/emake.el' \
+	--eval "(setq enable-dir-local-variables nil)" \
+	-L . \
+	$(EMACS_ARGS) \
+	--eval "(emake (pop argv))"
+
+CURL := curl --fail --silent --show-error --insecure --location --retry 9 --retry-delay 9
+
+$(EMAKE_WORKDIR)/elpa: $(EMAKE_WORKDIR)/emake.el
+	$(EMAKE) install
+
+$(EMAKE_WORKDIR):
+	mkdir -p $(EMAKE_WORKDIR)
+
+$(EMAKE_WORKDIR)/emake.el: $(EMAKE_WORKDIR)
+	$(CURL) 'https://raw.githubusercontent.com/vermiculus/emake.el/$(EMAKE_SHA1)/emake.el' \
+	  --output '$(EMAKE_WORKDIR)/emake.el'
+
+lisp: $(EMAKE_WORKDIR)/elpa loaddefs $(ELS)
+	$(EMAKE) compile
 
 loaddefs: $(PKG)-autoloads.el
 
-%.elc: %.el
-	@printf "Compiling $<\n"
-	@$(EMACS) -Q --batch $(EMACS_ARGS) \
-	$(LOAD_PATH) --funcall batch-byte-compile $<
-
-CLEAN  = $(ELCS) $(PKG)-autoloads.el
+CLEAN  = $(ELCS) $(PKG)-autoloads.el $(EMAKE_WORKDIR)
 
 clean:
 	@printf "Cleaning...\n"

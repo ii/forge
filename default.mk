@@ -20,23 +20,11 @@ ELS  += $(PKG)-commands.el
 ELS  += $(PKG)-list.el
 ELCS  = $(ELS:.el=.elc)
 
-DEPS  = closql
-DEPS += dash
-DEPS += hydra # for lv.el
-DEPS += emacsql
-DEPS += ghub
-DEPS += graphql
-DEPS += magit/lisp
-DEPS += markdown-mode
-DEPS += transient/lisp
-DEPS += treepy
-DEPS += with-editor
+EMAKE_WORKDIR  ?= .emake
+EMAKE_LOGLEVEL ?= INFO
 
 EMACS      ?= emacs
 EMACS_ARGS ?=
-
-LOAD_PATH  ?= $(addprefix -L ../../,$(DEPS))
-LOAD_PATH  += -L .
 
 ifndef ORG_LOAD_PATH
 ORG_LOAD_PATH  = -L ../../dash
