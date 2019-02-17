@@ -10,7 +10,7 @@ EMAKE_ENV += EMAKE_WORKDIR="$(EMAKE_WORKDIR)"
 EMAKE_ENV += EMAKE_LOGLEVEL="$(EMAKE_LOGLEVEL)"
 
 # Then, make it easy to invoke Emacs with EMake loaded.
-EMAKE = $(EMAKE_ENV) $(EMACS) --quick --batch --load '$(EMAKE_WORKDIR)/emake.el' \
+EMAKE = $(EMAKE_ENV) $(EMACS) --quick --batch --load '../$(EMAKE_WORKDIR)/emake.el' \
 	--eval "(setq enable-dir-local-variables nil)" \
 	-L . \
 	-l .build.el \
@@ -19,22 +19,19 @@ EMAKE = $(EMAKE_ENV) $(EMACS) --quick --batch --load '$(EMAKE_WORKDIR)/emake.el'
 
 CURL := curl --fail --silent --show-error --insecure --location --retry 9 --retry-delay 9
 
-$(EMAKE_WORKDIR)/elpa: $(EMAKE_WORKDIR)/emake.el
+../$(EMAKE_WORKDIR)/elpa: ../$(EMAKE_WORKDIR)/emake.el
 	$(EMAKE) install
 
-$(EMAKE_WORKDIR):
-	mkdir -p $(EMAKE_WORKDIR)
+../$(EMAKE_WORKDIR)/emake.el:
+	@mkdir -p ../$(EMAKE_WORKDIR)
+	$(CURL) 'https://raw.githubusercontent.com/vermiculus/emake.el/$(EMAKE_SHA1)/emake.el' --output '../$(EMAKE_WORKDIR)/emake.el'
 
-$(EMAKE_WORKDIR)/emake.el: $(EMAKE_WORKDIR)
-	$(CURL) 'https://raw.githubusercontent.com/vermiculus/emake.el/$(EMAKE_SHA1)/emake.el' \
-	  --output '$(EMAKE_WORKDIR)/emake.el'
-
-lisp: $(EMAKE_WORKDIR)/elpa loaddefs $(ELS)
+lisp: ../$(EMAKE_WORKDIR)/elpa loaddefs $(ELS)
 	$(EMAKE) compile
 
 loaddefs: $(PKG)-autoloads.el
 
-CLEAN  = $(ELCS) $(PKG)-autoloads.el $(EMAKE_WORKDIR)
+CLEAN  = $(ELCS) $(PKG)-autoloads.el ../$(EMAKE_WORKDIR)
 
 clean:
 	@printf "Cleaning...\n"
