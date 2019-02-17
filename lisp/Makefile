@@ -1,9 +1,9 @@
 -include ../config.mk
 include ../default.mk
 
-EMAKE_SHA1 := 36c1603918c90327af6b97c3c621d555758d21d5
+EMAKE_SHA1 := 2dce38f5cdf9b7823fc16c5d0be2be615f8ff9f9
 
-EMAKE_ENV += PACKAGE_FILE="../$(PKG)-pkg.el"
+EMAKE_ENV += PACKAGE_FILE="$(PKG)-pkg.el"
 EMAKE_ENV += PACKAGE_LISP="$(ELS)"
 EMAKE_ENV += PACKAGE_ARCHIVES="gnu melpa"
 EMAKE_ENV += EMAKE_WORKDIR="$(EMAKE_WORKDIR)"
@@ -13,6 +13,7 @@ EMAKE_ENV += EMAKE_LOGLEVEL="$(EMAKE_LOGLEVEL)"
 EMAKE = $(EMAKE_ENV) $(EMACS) --quick --batch --load '$(EMAKE_WORKDIR)/emake.el' \
 	--eval "(setq enable-dir-local-variables nil)" \
 	-L . \
+	-l .build.el \
 	$(EMACS_ARGS) \
 	--eval "(emake (pop argv))"
 
