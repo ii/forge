@@ -17,7 +17,7 @@ EMAKE = $(EMAKE_ENV) $(EMACS) --quick --batch --load '../$(EMAKE_WORKDIR)/emake.
 	$(EMACS_ARGS) \
 	--eval "(emake (pop argv))"
 
-CURL := curl --fail --silent --show-error --insecure --location --retry 9 --retry-delay 9
+CURL := curl -fsSkL --retry 9 --retry-delay 9
 
 ../$(EMAKE_WORKDIR)/elpa: ../$(EMAKE_WORKDIR)/emake.el
 	$(EMAKE) install
