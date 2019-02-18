@@ -1,7 +1,7 @@
 -include ../config.mk
 include ../default.mk
 
-EMAKE_SHA1 := bbcdc1b9ad6ab040c316f4bccd66cab3ac9ac59c
+EMAKE_SHA1 := f3cc539c7d9223a24bcae102cc3936d7776b0dd6
 
 EMAKE_ENV += PACKAGE_FILE="$(PKG)-pkg.el"
 EMAKE_ENV += PACKAGE_LISP="$(ELS)"
