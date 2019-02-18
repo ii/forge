@@ -206,20 +206,11 @@ The symbol `_' may be used as a catch-all TYPE."
   (declare (indent 1)
            (debug (form &rest (symbolp body))))
   (let ((Sexpr (cl-gensym)) form)
-    (cl-block clause-loop
-      (pcase-dolist (`(,type . ,body) clauses)
-        (if (eq type '_)
-            ;; If the type is _, there's no point in continuing; the
-            ;; `cond' will always succeed at this point.  Might as
-            ;; well reduce the compile size.
-            (progn
-              (push `(t ,@body) form)
-              (cl-return-from clause-loop))
-          (push `((forge--childp ,Sexpr ',type) ,@body) form))))
-
+    (pcase-dolist (`(,type . ,body) clauses)
+      (if (eq type '_)
+          (push `(t ,@body) form)
+        (push `((forge--childp ,Sexpr ',type) ,@body) form)))
     `(let ((,Sexpr ,expr))
-       ;; we iterated in order and pushed to the head of the list
-       ;; (instead of appending); reverse it so it makes sense again
        (cond ,@(nreverse form)))))
 
 (defmacro forge--echildcase (expr &rest clauses)
